@@ -6,20 +6,20 @@ const AssignmentPanel = () => {
   const [suppliers, setSuppliers] = useState([])
   const [form, setForm] = useState({ product_id: '', supplier_id: '', stock: '' })
 
-  const API_BASE = 'http://localhost/admin-dashboard/backend/api'
+  const API_BASE = 'http://localhost/Inventory_Management_System/backend/routes/admin'
 
-//   useEffect(() => {
-//     fetchProducts()
-//     fetchSuppliers()
-//   }, [])
+  useEffect(() => {
+    fetchProducts()
+    fetchSuppliers()
+  }, [])
 
   const fetchProducts = async () => {
-    const res = await axios.get(`${API_BASE}/products`)
+    const res = await axios.get(`${API_BASE}/products.php`)
     setProducts(res.data)
   }
 
   const fetchSuppliers = async () => {
-    const res = await axios.get(`${API_BASE}/suppliers`)
+    const res = await axios.get(`${API_BASE}/suppliers.php`)
     setSuppliers(res.data)
   }
 
@@ -30,7 +30,7 @@ const AssignmentPanel = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await axios.post(`${API_BASE}/assignments`, form)
+      await axios.post(`${API_BASE}/assignments.php`, form)
       alert('Assignment saved!')
       setForm({ product_id: '', supplier_id: '', stock: '' })
     } catch (err) {

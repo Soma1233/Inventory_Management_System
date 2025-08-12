@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // var_dump($_SESSION);
 if (isset($_SESSION['user_id'])) {
-    echo "Swef";
+    // echo "Swef";
     $sql = "SELECT id, username, role FROM users WHERE id = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['id' => $_SESSION['user_id']]);

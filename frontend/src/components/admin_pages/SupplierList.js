@@ -8,7 +8,8 @@ const SupplierList = () => {
     name: '',
     contact_email: '',
     phone: '',
-    address: ''
+    address: '',
+    password: ''
   })
 
   const API_BASE = 'http://localhost/Inventory_Management_System/backend/routes/admin/suppliers.php'
@@ -20,7 +21,7 @@ const SupplierList = () => {
   const fetchSuppliers = async () => {
     try {
       const res = await axios.get(API_BASE)
-      setSuppliers(Array.isArray(res.data) ? res.data : [])
+      setSuppliers(res.data)
     } catch (err) {
       console.error('Error fetching suppliers:', err)
     }
@@ -38,7 +39,7 @@ const SupplierList = () => {
       } else {
         await axios.post(API_BASE, form)
       }
-      setForm({ id: null, name: '', contact_email: '', phone: '', address: '' })
+      setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })
       fetchSuppliers()
     } catch (err) {
       console.error('Error saving supplier:', err)
@@ -46,17 +47,24 @@ const SupplierList = () => {
   }
 
   const handleEdit = (supplier) => {
-    setForm(supplier)
+    setForm({ ...supplier, password: '' }) // Don't show password on edit
   }
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_BASE}?id=${id}`)
+      await axios.delete(API_BASE, {
+        params: { id },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       fetchSuppliers()
     } catch (err) {
       console.error('Error deleting supplier:', err)
     }
   }
+  
+  
 
   return (
     <div>
@@ -67,8 +75,11 @@ const SupplierList = () => {
         <input type="email" name="contact_email" placeholder="Email" value={form.contact_email} onChange={handleChange} required />
         <input type="text" name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
         <input type="text" name="address" placeholder="Address" value={form.address} onChange={handleChange} required />
+        {!form.id && (
+          <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+        )}
         <button type="submit">{form.id ? 'Update' : 'Add'} Supplier</button>
-        {form.id && <button type="button" onClick={() => setForm({ id: null, name: '', contact_email: '', phone: '', address: '' })}>Cancel</button>}
+        {form.id && <button type="button" onClick={() => setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })}>Cancel</button>}
       </form>
 
       <table border="1" cellPadding="8" style={{ marginTop: '1rem' }}>
