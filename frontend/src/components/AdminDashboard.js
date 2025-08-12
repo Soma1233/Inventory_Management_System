@@ -5,9 +5,17 @@ import SupplierList from './admin_pages/SupplierList'
 import AssignmentPanel from './admin_pages/AssignmentPanel'
 import NotificationPanel from './admin_pages/NotificationPanel'
 
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext)
   const [activeTab, setActiveTab] = useState('products')
+
+
+  const navigate = useNavigate();
+
 
   const renderSection = () => {
     switch (activeTab) {
@@ -24,19 +32,36 @@ const AdminDashboard = () => {
     }
   }
 
+  const Logout = async () => {
+    try {
+      const res = await axios.get('http://localhost/Inventory_Management_System/backend/routes/logout.php', {
+        // withCredentials: true
+      });
+      // console.log(res)
+      if (res.data.status === 'logged out') {
+        // setuser(null); // Clear user context
+        navigate('/login'); // Redirect to login page
+      }
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
+  
+
   return (
     <div>
       <header style={styles.header}>
-        <h2>Welcome, --{user ? (
-      <h2>Welcome, {user.username}!</h2>
+        <h2>Welcome,</h2> {user ? (
+      <h3>{user.username}!</h3>
     ) : (
       <p>Loading user info...</p>
-    )}</h2>
+    )}
         <nav style={styles.nav}>
           <button onClick={() => setActiveTab('products')}>Products</button>
           <button onClick={() => setActiveTab('suppliers')}>Suppliers</button>
           <button onClick={() => setActiveTab('assignments')}>Assignments</button>
           <button onClick={() => setActiveTab('notifications')}>Notifications</button>
+          <button onClick={() => Logout()}>Logout</button>
         </nav>
       </header>
 
