@@ -6,6 +6,7 @@ import Login from './components/Login';
 // import Dashboard from './components/Dashboard'
 import AdminDashboard from './components/AdminDashboard';
 import SupplierDashboard from './components/SupplierDashboard';
+import AuthProvider from './context/AuthProvider';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/supplierdashboard" element={<SupplierDashboard/>} />
         <Route path='/admindashboard' element={<AdminDashboard/>}/>
+        <Route path='/auth' element={<AuthProvider/>}/>
       </Routes>
     </Router>
   );

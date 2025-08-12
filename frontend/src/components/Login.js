@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import './styles/login.css'; // or './Login.css'
+import './styles/login.css'; 
+import { AuthContext } from '../context/AuthProvider';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const {setuser}=useContext(AuthContext)
   const navigate = useNavigate();
   const handleLogin = async () => {
     try {
@@ -13,10 +15,11 @@ function Login() {
         username,
         password
       });
-      console.log(res)
   
       if (res.data.status === 'success') {
         const role = res.data.user.role;
+        setuser(res.data.user)
+
   
         if (role === 'admin') {
           navigate('/admindashboard');
