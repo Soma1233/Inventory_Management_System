@@ -1,31 +1,66 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const AssignedProductList = ({ supplierId }) => {
-  const [products, setProducts] = useState([])
+const AssignedProductList = ({ userId }) => {
+  const [products, setProducts] = useState([]);
+  const API_BASE = 'http://localhost/Inventory_Management_System/backend/routes/suppliers';
 
   useEffect(() => {
-    axios.get(`/api/products?supplierId=${supplierId}`)
-      .then(res => setProducts(res.data))
-      .catch(err => console.error('Error fetching products:', err))
-  }, [supplierId])
+    if (userId) {
+      axios
+        .get(`${API_BASE}/assigned_products.php?userId=${userId}`)
+        .then((res) => {
+          // console.log("SS",res)
+          const pendingProducts = res.data.filter((p) => p.status === 'pending');
+          setProducts(pendingProducts);
+        })
+        .catch((err) => console.error('Error fetching products:', err));
+    }
+  }, [userId]);
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await axios.put(`${API_BASE}/assigned_products.php?id=${id}`, { status: newStatus });
+      setProducts((prev) => prev.filter((p) => p.id !== id)); // Remove after status change
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
+  };
 
   return (
     <div>
-      <h3>Assigned Products</h3>
+      <h3>Pending Product Requests</h3>
       {products.length === 0 ? (
-        <p>No products assigned.</p>
+        <p>No pending requests.</p>
       ) : (
-        <ul>
-          {products.map(product => (
-            <li key={product.id}>
-              <strong>{product.name}</strong> — Stock: {product.stock}
-            </li>
-          ))}
-        </ul>
+        <table border="1" cellPadding="8">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Current Stock</th>
+              <th>Requested Quantity</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.stock_quantity}</td>
+                <td>{product.requested_quantity}</td>
+                <td>{product.status}</td>
+                <td>
+                  <button onClick={() => handleStatusChange(product.id, 'approved')}>Approve</button>
+                  <button onClick={() => handleStatusChange(product.id, 'rejected')}>Reject</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AssignedProductList
+export default AssignedProductList;

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+// import ProductForm from './ProductForm'; // Import the form component
+import AddProductForm from './AddProductForm';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -34,10 +36,8 @@ const ProductList = () => {
     e.preventDefault();
     try {
       if (form.id) {
-        // Update existing product
         await axios.put(`${API_BASE}?id=${form.id}`, form);
       } else {
-        // Add new product
         await axios.post(API_BASE, form);
       }
       setForm({ id: null, name: '', description: '', price: '', stock_quantity: '' });
@@ -60,52 +60,56 @@ const ProductList = () => {
     }
   };
 
+  const handleCancel = () => {
+    setForm({ id: null, name: '', description: '', price: '', stock_quantity: '' });
+  };
+
   return (
     <div>
-      <h2>Product Management</h2>
+      <h2 style={{ textAlign: 'center' }}>Product Management</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
-        <input type="text" name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
-        <input type="number" name="price" placeholder="Price" value={form.price} onChange={handleChange} required />
-        <input type="number" name="stock_quantity" placeholder="Stock Quantity" value={form.stock_quantity} onChange={handleChange} required />
-        <button type="submit">{form.id ? 'Update Product' : 'Add Product'}</button>
-        {form.id && <button type="button" onClick={() => setForm({ id: null, name: '', description: '', price: '', stock_quantity: '' })}>Cancel</button>}
-      </form>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+        <AddProductForm
+          form={form}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+        />
+      </div>
 
-      <table border="1" cellPadding="8" style={{ marginTop: '1rem' }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price (₹)</th>
-            <th>Stock</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.length > 0 ? (
-            products.map((product) => (
-              <tr key={product.id}>
-                <td>{product.id}</td>
-                <td>{product.name}</td>
-                <td>{product.description}</td>
-                <td>{product.price}</td>
-                <td>{product.stock_quantity}</td>
-                <td>
-                  <button onClick={() => handleEdit(product)}>Edit</button>{' '}
-                  <button onClick={() => handleDelete(product.id)}>Delete</button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6">No products found</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div
+              key={product.id}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                padding: '1rem',
+                width: '250px',
+                height: '300px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+              }}
+            >
+              <div>
+                <h4>{product.name}</h4>
+                <p><strong>Description:</strong> {product.description}</p>
+                <p><strong>Price:</strong> ₹{product.price}</p>
+                <p><strong>Stock:</strong> {product.stock_quantity}</p>
+              </div>
+              <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
+                <button onClick={() => handleEdit(product)}>Edit</button>
+                <button onClick={() => handleDelete(product.id)}>Delete</button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No products found</p>
+        )}
+      </div>
     </div>
   );
 };

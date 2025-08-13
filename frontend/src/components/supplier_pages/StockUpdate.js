@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
-const StockUpdate = ({ supplierId }) => {
+const StockUpdate = ({ userId }) => {
   const [products, setProducts] = useState([])
   const [stockUpdates, setStockUpdates] = useState({})
 
   useEffect(() => {
-    axios.get(`/api/products?supplierId=${supplierId}`)
+    axios.get(`http://localhost/Inventory_Management_System/backend/routes/suppliers/assigned_products.php?userId=${userId}`)
       .then(res => setProducts(res.data))
       .catch(err => console.error('Error loading products:', err))
-  }, [supplierId])
+  }, [userId])
 
   const handleChange = (productId, value) => {
     setStockUpdates(prev => ({ ...prev, [productId]: value }))

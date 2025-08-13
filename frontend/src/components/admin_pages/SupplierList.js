@@ -68,9 +68,20 @@ const SupplierList = () => {
 
   return (
     <div>
-      <h2>Supplier Management</h2>
+      
 
-      <form onSubmit={handleSubmit}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' ,flexDirection:'column',alignItems:'center'}}>
+      <h2>Supplier Management</h2>
+      <form onSubmit={handleSubmit}  style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.75rem',
+      width: '300px',
+      padding: '1rem',
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+    }}>
         <input type="text" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
         <input type="email" name="contact_email" placeholder="Email" value={form.contact_email} onChange={handleChange} required />
         <input type="text" name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
@@ -81,6 +92,8 @@ const SupplierList = () => {
         <button type="submit">{form.id ? 'Update' : 'Add'} Supplier</button>
         {form.id && <button type="button" onClick={() => setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })}>Cancel</button>}
       </form>
+
+
 
       <table border="1" cellPadding="8" style={{ marginTop: '1rem' }}>
         <thead>
@@ -115,6 +128,9 @@ const SupplierList = () => {
           )}
         </tbody>
       </table>
+      </div>
+
+      
     </div>
   )
 }

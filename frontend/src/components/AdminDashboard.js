@@ -59,7 +59,7 @@ const AdminDashboard = () => {
         <nav style={styles.nav}>
           <button onClick={() => setActiveTab('products')}>Products</button>
           <button onClick={() => setActiveTab('suppliers')}>Suppliers</button>
-          <button onClick={() => setActiveTab('assignments')}>Assignments</button>
+          <button onClick={() => setActiveTab('assignments')}>Request Stock</button>
           <button onClick={() => setActiveTab('notifications')}>Notifications</button>
           <button onClick={() => Logout()}>Logout</button>
         </nav>
