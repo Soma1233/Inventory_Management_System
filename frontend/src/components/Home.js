@@ -5,12 +5,21 @@ import '../App.css';
 function Home() {
   return (
     <div className="container">
-      <h1>Inventory Management System</h1>
-      <nav>
+      <header className="header">
+        <img src='OIP.jpg' alt="Inventory Logo" className="logo" />
+        <h1>Inventory Management System</h1>
+      </header>
+      
+      <nav className="nav">
         {/* <Link to="/register">Register</Link> */}
         <Link to="/login">Login</Link>
       </nav>
-      <p>Welcome to your inventory dashboard. Track, manage, and organize your items efficiently.</p>
+
+      <main>
+        <p>
+          Welcome to your inventory dashboard. Track, manage, and organize your items efficiently.
+        </p>
+      </main>
     </div>
   );
 }

@@ -10,12 +10,18 @@ import { useNavigate } from 'react-router-dom';
 
 
 const AdminDashboard = () => {
-  const { user } = useContext(AuthContext)
+  const { user ,loading } = useContext(AuthContext)
   const [activeTab, setActiveTab] = useState('products')
 
 
   const navigate = useNavigate();
 
+  if (loading) {
+    return <p>Loading user info...</p>;
+  }
+  if(user.role=="supplier"){
+    return <p>You are restricted to view this page</p>
+  }
 
   const renderSection = () => {
     switch (activeTab) {
@@ -35,7 +41,7 @@ const AdminDashboard = () => {
   const Logout = async () => {
     try {
       const res = await axios.get('http://localhost/Inventory_Management_System/backend/routes/logout.php', {
-        // withCredentials: true
+        withCredentials: true
       });
       // console.log(res)
       if (res.data.status === 'logged out') {

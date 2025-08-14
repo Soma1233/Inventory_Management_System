@@ -7,20 +7,21 @@ import { AuthContext } from '../context/AuthProvider';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const {setuser}=useContext(AuthContext)
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const handleLogin = async () => {
     try {
-      const res = await axios.post('http://localhost/Inventory_Management_System/backend/routes/admin/login.php', {
-        username,
-        password
-      });
-  
+      const res = await axios.post(
+        'http://localhost/Inventory_Management_System/backend/routes/admin/login.php',
+        { username, password },
+        { withCredentials: true }
+      );
+
       if (res.data.status === 'success') {
         const role = res.data.user.role;
-        setuser(res.data.user)
+        setUser(res.data.user);
 
-  
         if (role === 'admin') {
           navigate('/admindashboard');
         } else if (role === 'supplier') {
@@ -32,10 +33,11 @@ function Login() {
         alert(res.data.message);
       }
     } catch (err) {
+      console.error('Login error:', err);
       alert('Login failed. Please try again.');
     }
   };
-  
+
   return (
     <div className="login-container">
       <h2>Login</h2>
@@ -51,7 +53,9 @@ function Login() {
         onChange={e => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>Login</button>
-      <p>Don't have an account? <Link to='/register'  >Register</Link> </p>
+      <p>
+        Don't have an account? <Link to='/register'>Register</Link>
+      </p>
     </div>
   );
 }

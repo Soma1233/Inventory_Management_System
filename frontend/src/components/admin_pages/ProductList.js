@@ -22,7 +22,7 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(API_BASE);
-      setProducts(Array.isArray(res.data) ? res.data : []);
+      setProducts(res.data);
     } catch (err) {
       console.error('Error fetching products:', err);
     }

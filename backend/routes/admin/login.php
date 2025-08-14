@@ -1,37 +1,39 @@
 <?php
-include '../../config/config.php';
 include '../../config/headers.php';
+include '../../config/config.php';
 
-session_start(); // Required for using $_SESSION
 
-// Handle preflight request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+session_start();
+
+
 
 // Read and decode JSON input
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!$data || !isset($data['username']) || !isset($data['password'])) {
+    http_response_code(400);
     echo json_encode(["status" => "error", "message" => "Invalid input"]);
     exit;
 }
 
-$username = $data['username'];
-$password = $data['password'];
+$username = trim($data['username']);
+$password = trim($data['password']);
 
-// Fetch user from database
+
 $sql = "SELECT * FROM users WHERE username = :username";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(['username' => $username]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-$res= password_verify($password, $user['password']);
-// var_dump ($res);
-// Validate user and password
+
+// Use password_verify for secure password checking
+// echo $user ;
+// echo $password;
+// echo $user['password'];
 if ($user && $password==$user['password']) {
-    
     $_SESSION['user_id'] = $user['id'];
+    $_SESSION['name'] = $user['username'];
+    $_SESSION['role'] = $user['role'];
+
     echo json_encode([
         "status" => "success",
         "user" => [
@@ -41,7 +43,7 @@ if ($user && $password==$user['password']) {
         ]
     ]);
 } else {
-    echo "Ss";
+    http_response_code(401);
     echo json_encode(["status" => "error", "message" => "Invalid credentials"]);
 }
 ?>

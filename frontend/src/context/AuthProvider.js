@@ -1,11 +1,33 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user,setuser]=useState(null)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await axios.get('http://localhost/Inventory_Management_System/backend/routes/auth.php', {
+          withCredentials: true
+        });
+        if (res.data.isAuthenticated) {
+          setUser(res.data.user);
+        }
+      } catch (err) {
+        console.error('Authentication check failed:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{user, setuser }}>
+    <AuthContext.Provider value={{ user, setUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
