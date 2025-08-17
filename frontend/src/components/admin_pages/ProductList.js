@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// import ProductForm from './ProductForm'; // Import the form component
 import AddProductForm from './AddProductForm';
+import '../styles/ProductList.css';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -12,8 +12,9 @@ const ProductList = () => {
     price: '',
     stock_quantity: ''
   });
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const API_BASE = 'http://localhost/Inventory_Management_System/backend/routes/admin/products.php';
+  const API_BASE = `${process.env.REACT_APP_API_URL}/admin/products.php`;
 
   useEffect(() => {
     fetchProducts();
@@ -37,8 +38,10 @@ const ProductList = () => {
     try {
       if (form.id) {
         await axios.put(`${API_BASE}?id=${form.id}`, form);
+        alert("Product updated successfully");
       } else {
         await axios.post(API_BASE, form);
+        alert("Product added successfully");
       }
       setForm({ id: null, name: '', description: '', price: '', stock_quantity: '' });
       fetchProducts();
@@ -55,6 +58,7 @@ const ProductList = () => {
     try {
       await axios.delete(`${API_BASE}?id=${id}`);
       fetchProducts();
+      alert("Product deleted successfully");
     } catch (err) {
       console.error('Error deleting product:', err);
     }
@@ -64,11 +68,20 @@ const ProductList = () => {
     setForm({ id: null, name: '', description: '', price: '', stock_quantity: '' });
   };
 
-  return (
-    <div>
-      <h2 style={{ textAlign: 'center' }}>Product Management</h2>
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="product-list-container">
+      <h2 className="product-list-title">Product Management</h2>
+
+      <div className="product-form-wrapper">
         <AddProductForm
           form={form}
           handleChange={handleChange}
@@ -77,30 +90,26 @@ const ProductList = () => {
         />
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div
-              key={product.id}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                padding: '1rem',
-                width: '250px',
-                height: '300px',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-              }}
-            >
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </div>
+
+      <div className="product-cards">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <div key={product.id} className="product-card">
               <div>
                 <h4>{product.name}</h4>
                 <p><strong>Description:</strong> {product.description}</p>
                 <p><strong>Price:</strong> ₹{product.price}</p>
                 <p><strong>Stock:</strong> {product.stock_quantity}</p>
               </div>
-              <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
+              <div className="product-card-buttons">
                 <button onClick={() => handleEdit(product)}>Edit</button>
                 <button onClick={() => handleDelete(product.id)}>Delete</button>
               </div>

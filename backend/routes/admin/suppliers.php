@@ -23,12 +23,12 @@ try {
             isset($data['password'])
         ) {
             // Step 1: Create user
-            // $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
             $stmtUser = $pdo->prepare("INSERT INTO users (username, password, role, created_at)
                                        VALUES (:username, :password, 'supplier', NOW())");
             $stmtUser->execute([
                 ':username' => $data['name'],
-                ':password' => $data['password']
+                ':password' => $hashedPassword
             ]);
             $userId = $pdo->lastInsertId();
     
@@ -76,17 +76,38 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
         if (isset($_GET['id'])) {
-            $stmt = $pdo->prepare("DELETE FROM suppliers WHERE id = :id");
+            // Step 1: Get supplier name
+            $stmt = $pdo->prepare("SELECT name FROM suppliers WHERE id = :id");
             $stmt->execute([':id' => $_GET['id']]);
-            echo json_encode(["status" => "deleted"]);
+            $supplier = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($supplier) {
+                $username = $supplier['name'];
+    
+                // Step 2: Delete supplier
+                $stmt = $pdo->prepare("DELETE FROM suppliers WHERE id = :id");
+                $stmt->execute([':id' => $_GET['id']]);
+    
+                // Step 3: Delete user
+                $stmt = $pdo->prepare("DELETE FROM users WHERE username = :username AND role = 'supplier'");
+                $stmt->execute([':username' => $username]);
+    
+                echo json_encode(["status" => "deleted"]);
+            } else {
+                http_response_code(404);
+                echo json_encode(["error" => "Supplier not found"]);
+            }
         } else {
             http_response_code(400);
             echo json_encode(["error" => "Missing supplier ID"]);
         }
     }
     
+    
 
 } catch (PDOException $e) {
+    error_log("PDOException: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(["error" => "Database error: " . $e->getMessage()]);
 }
+

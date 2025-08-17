@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../styles/AssignedProductList.css';
 
 const AssignedProductList = ({ userId }) => {
   const [products, setProducts] = useState([]);
-  const API_BASE = 'http://localhost/Inventory_Management_System/backend/routes/suppliers';
+  const API_BASE = `${process.env.REACT_APP_API_URL}/suppliers`;
 
   useEffect(() => {
     if (userId) {
       axios
         .get(`${API_BASE}/assigned_products.php?userId=${userId}`)
         .then((res) => {
-          // console.log("SS",res)
           const pendingProducts = res.data.filter((p) => p.status === 'pending');
           setProducts(pendingProducts);
         })
@@ -21,19 +21,19 @@ const AssignedProductList = ({ userId }) => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       await axios.put(`${API_BASE}/assigned_products.php?id=${id}`, { status: newStatus });
-      setProducts((prev) => prev.filter((p) => p.id !== id)); // Remove after status change
+      setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       console.error('Error updating status:', err);
     }
   };
 
   return (
-    <div>
+    <div className="assigned-products-panel">
       <h3>Pending Product Requests</h3>
       {products.length === 0 ? (
         <p>No pending requests.</p>
       ) : (
-        <table border="1" cellPadding="8">
+        <table className="assigned-products-table">
           <thead>
             <tr>
               <th>Product Name</th>

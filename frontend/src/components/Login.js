@@ -13,7 +13,7 @@ function Login() {
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-        'http://localhost/Inventory_Management_System/backend/routes/admin/login.php',
+        `${process.env.REACT_APP_API_URL}/admin/login.php`,
         { username, password },
         { withCredentials: true }
       );
@@ -23,8 +23,10 @@ function Login() {
         setUser(res.data.user);
 
         if (role === 'admin') {
+          alert("Logging In!...")
           navigate('/admindashboard');
         } else if (role === 'supplier') {
+          alert("Logging In!...")
           navigate('/supplierdashboard');
         } else {
           alert('Unknown role. Please contact support.');
@@ -54,7 +56,7 @@ function Login() {
       />
       <button onClick={handleLogin}>Login</button>
       <p>
-        Don't have an account? <Link to='/register'>Register</Link>
+        Go Back to Home? <Link to='/'>Home</Link>
       </p>
     </div>
   );

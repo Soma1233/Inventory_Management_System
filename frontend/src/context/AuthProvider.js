@@ -10,7 +10,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get('http://localhost/Inventory_Management_System/backend/routes/auth.php', {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth.php`, {
           withCredentials: true
         });
         if (res.data.isAuthenticated) {

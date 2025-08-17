@@ -6,7 +6,7 @@ const StockUpdate = ({ userId }) => {
   const [stockUpdates, setStockUpdates] = useState({})
 
   useEffect(() => {
-    axios.get(`http://localhost/Inventory_Management_System/backend/routes/suppliers/assigned_products.php?userId=${userId}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/suppliers/assigned_products.php?userId=${userId}`)
       .then(res => setProducts(res.data))
       .catch(err => console.error('Error loading products:', err))
   }, [userId])

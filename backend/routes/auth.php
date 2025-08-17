@@ -2,7 +2,6 @@
 include '../config/config.php';
 include '../config/headers.php';
 
-// session_start();
 
 if (isset($_COOKIE['PHPSESSID'])) {
     session_start();

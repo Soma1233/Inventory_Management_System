@@ -6,12 +6,10 @@ function Home() {
   return (
     <div className="container">
       <header className="header">
-        <img src='OIP.jpg' alt="Inventory Logo" className="logo" />
         <h1>Inventory Management System</h1>
       </header>
       
       <nav className="nav">
-        {/* <Link to="/register">Register</Link> */}
         <Link to="/login">Login</Link>
       </nav>
 

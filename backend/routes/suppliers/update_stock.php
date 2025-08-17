@@ -4,7 +4,6 @@ include '../../config/config.php';
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-        // Read raw input and decode JSON
         $data = json_decode(file_get_contents("php://input"), true);
         parse_str($_SERVER['QUERY_STRING'], $queryParams);
 

@@ -6,15 +6,15 @@ try {
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        $stmt = $pdo->query("SELECT ps.id, ps.product_id, ps.supplier_id, ps.requested_quantity, ps.status,
-                             p.name AS product_name, s.name AS supplier_name
-                             FROM product_supplier ps
-                             JOIN products p ON ps.product_id = p.id
-                             JOIN suppliers s ON ps.supplier_id = s.id");
+        $stmt = $pdo->query("
+            SELECT ps.id, ps.product_id, ps.supplier_id, ps.requested_quantity, ps.status,
+                   p.name AS product_name, s.name AS supplier_name
+            FROM product_supplier ps
+            JOIN products p ON ps.product_id = p.id
+            JOIN suppliers s ON ps.supplier_id = s.id
+        ");
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
-    }
-
-    elseif ($method === 'POST') {
+    } elseif ($method === 'POST') {
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (isset($data['product_id'], $data['supplier_id'], $data['requested_quantity'], $data['status'])) {
@@ -53,20 +53,20 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing required fields"]);
         }
-    }
-
-    elseif ($method === 'PUT') {
+    } elseif ($method === 'PUT') {
         parse_str($_SERVER['QUERY_STRING'], $params);
         $id = $params['id'] ?? null;
         $data = json_decode(file_get_contents("php://input"), true);
 
         if ($id && isset($data['product_id'], $data['supplier_id'], $data['requested_quantity'], $data['status'])) {
-            $stmt = $pdo->prepare("UPDATE product_supplier SET
-                                   product_id = :product_id,
-                                   supplier_id = :supplier_id,
-                                   requested_quantity = :requested_quantity,
-                                   status = :status
-                                   WHERE id = :id");
+            $stmt = $pdo->prepare("
+                UPDATE product_supplier SET
+                    product_id = :product_id,
+                    supplier_id = :supplier_id,
+                    requested_quantity = :requested_quantity,
+                    status = :status
+                WHERE id = :id
+            ");
             $stmt->execute([
                 ':product_id' => $data['product_id'],
                 ':supplier_id' => $data['supplier_id'],
@@ -79,9 +79,7 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing required fields"]);
         }
-    }
-
-    elseif ($method === 'DELETE') {
+    } elseif ($method === 'DELETE') {
         parse_str($_SERVER['QUERY_STRING'], $params);
         $id = $params['id'] ?? null;
 
@@ -93,9 +91,7 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing assignment ID"]);
         }
-    }
-
-    else {
+    } else {
         http_response_code(405);
         echo json_encode(["error" => "Method not allowed"]);
     }

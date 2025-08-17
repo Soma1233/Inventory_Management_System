@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import '../styles/SupplierList.css';
 
 const SupplierList = () => {
-  const [suppliers, setSuppliers] = useState([])
+  const [suppliers, setSuppliers] = useState([]);
   const [form, setForm] = useState({
     id: null,
     name: '',
@@ -10,92 +11,104 @@ const SupplierList = () => {
     phone: '',
     address: '',
     password: ''
-  })
+  });
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const API_BASE = 'http://localhost/Inventory_Management_System/backend/routes/admin/suppliers.php'
+  const API_BASE = `${process.env.REACT_APP_API_URL}/admin/suppliers.php`;
 
   useEffect(() => {
-    fetchSuppliers()
-  }, [])
+    fetchSuppliers();
+  }, []);
 
   const fetchSuppliers = async () => {
     try {
-      const res = await axios.get(API_BASE)
-      setSuppliers(res.data)
+      const res = await axios.get(API_BASE);
+      setSuppliers(res.data);
     } catch (err) {
-      console.error('Error fetching suppliers:', err)
+      console.error('Error fetching suppliers:', err);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       if (form.id) {
-        await axios.put(`${API_BASE}?id=${form.id}`, form)
+        await axios.put(`${API_BASE}?id=${form.id}`, form);
+        alert("Supplier updated successfully");
       } else {
-        await axios.post(API_BASE, form)
+        await axios.post(API_BASE, form);
+        alert("Supplier added successfully");
       }
-      setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })
-      fetchSuppliers()
+      setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' });
+      fetchSuppliers();
     } catch (err) {
-      console.error('Error saving supplier:', err)
+      console.error('Error saving supplier:', err);
     }
-  }
+  };
 
   const handleEdit = (supplier) => {
-    setForm({ ...supplier, password: '' }) // Don't show password on edit
-  }
+    setForm({ ...supplier, password: '' });
+  };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(API_BASE, {
-        params: { id },
+      await axios.delete(`${API_BASE}?id=${id}`, {
         headers: {
           'Content-Type': 'application/json'
         }
-      })
-      fetchSuppliers()
+      });
+      fetchSuppliers();
+      alert("Supplier deleted successfully");
     } catch (err) {
-      console.error('Error deleting supplier:', err)
+      console.error('Error deleting supplier:', err);
     }
-  }
-  
-  
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredSuppliers = suppliers.filter((s) =>
+    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.contact_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.address.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div>
-      
-
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' ,flexDirection:'column',alignItems:'center'}}>
+    <div className="supplier-panel">
       <h2>Supplier Management</h2>
-      <form onSubmit={handleSubmit}  style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.75rem',
-      width: '300px',
-      padding: '1rem',
-      border: '1px solid #ccc',
-      borderRadius: '8px',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-    }}>
+
+      <form onSubmit={handleSubmit} className="supplier-form">
         <input type="text" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
         <input type="email" name="contact_email" placeholder="Email" value={form.contact_email} onChange={handleChange} required />
-        <input type="text" name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
+        <input type="number" name="phone" placeholder="Phone" maxLength={10} value={form.phone} onChange={handleChange} required />
         <input type="text" name="address" placeholder="Address" value={form.address} onChange={handleChange} required />
         {!form.id && (
           <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
         )}
         <button type="submit">{form.id ? 'Update' : 'Add'} Supplier</button>
-        {form.id && <button type="button" onClick={() => setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })}>Cancel</button>}
+        {form.id && (
+          <button type="button" onClick={() => setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })}>
+            Cancel
+          </button>
+        )}
       </form>
 
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search suppliers..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </div>
 
-
-      <table border="1" cellPadding="8" style={{ marginTop: '1rem' }}>
+      <table className="supplier-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -107,8 +120,8 @@ const SupplierList = () => {
           </tr>
         </thead>
         <tbody>
-          {suppliers.length > 0 ? (
-            suppliers.map((s) => (
+          {filteredSuppliers.length > 0 ? (
+            filteredSuppliers.map((s) => (
               <tr key={s.id}>
                 <td>{s.id}</td>
                 <td>{s.name}</td>
@@ -116,7 +129,7 @@ const SupplierList = () => {
                 <td>{s.phone}</td>
                 <td>{s.address}</td>
                 <td>
-                  <button onClick={() => handleEdit(s)}>Edit</button>{' '}
+                  <button onClick={() => handleEdit(s)}>Edit</button>
                   <button onClick={() => handleDelete(s.id)}>Delete</button>
                 </td>
               </tr>
@@ -128,11 +141,8 @@ const SupplierList = () => {
           )}
         </tbody>
       </table>
-      </div>
-
-      
     </div>
-  )
-}
+  );
+};
 
-export default SupplierList
+export default SupplierList;

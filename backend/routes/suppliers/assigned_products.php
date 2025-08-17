@@ -7,10 +7,9 @@ try {
 
     if ($method === 'GET') {
         $userId = isset($_GET['userId']) ? intval($_GET['userId']) : null;
-        $type = isset($_GET['type']) ? $_GET['type'] : 'pending'; // 'pending' or 'history'
+        $type = isset($_GET['type']) ? $_GET['type'] : 'pending';
 
         if ($userId) {
-            // Get supplier ID from user ID
             $stmtSupplier = $pdo->prepare("
                 SELECT s.id AS supplier_id
                 FROM suppliers s
@@ -19,12 +18,9 @@ try {
             ");
             $stmtSupplier->execute([':user_id' => $userId]);
             $supplier = $stmtSupplier->fetch(PDO::FETCH_ASSOC);
-            // var_dump($type);
+
             if ($supplier && isset($supplier['supplier_id'])) {
                 $supplierId = $supplier['supplier_id'];
-                
-            // var_dump($supplierId);
-            // echo $supplierId;
 
                 if ($type === 'history') {
                     $stmt = $pdo->prepare("
@@ -43,7 +39,6 @@ try {
                     ");
                     $stmt->execute([':supplier_id' => $supplierId]);
                 } else {
-                    // echo "SdFDS";
                     $stmt = $pdo->prepare("
                         SELECT 
                             ps.id,
@@ -70,9 +65,7 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing userId"]);
         }
-    }
-
-    elseif ($method === 'PUT') {
+    } elseif ($method === 'PUT') {
         parse_str($_SERVER['QUERY_STRING'], $params);
         $id = $params['id'] ?? null;
         $data = json_decode(file_get_contents("php://input"), true);
@@ -81,14 +74,12 @@ try {
             $pdo->beginTransaction();
 
             try {
-                // Update status
                 $stmt = $pdo->prepare("UPDATE product_supplier SET status = :status WHERE id = :id");
                 $stmt->execute([
                     ':status' => $data['status'],
                     ':id' => $id
                 ]);
 
-                // If approved, update product stock
                 if ($data['status'] === 'approved') {
                     $stmtDetails = $pdo->prepare("SELECT product_id, requested_quantity FROM product_supplier WHERE id = :id");
                     $stmtDetails->execute([':id' => $id]);
@@ -118,9 +109,7 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing ID or status"]);
         }
-    }
-
-    else {
+    } else {
         http_response_code(405);
         echo json_encode(["error" => "Method not allowed"]);
     }
