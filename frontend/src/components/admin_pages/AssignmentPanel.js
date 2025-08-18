@@ -34,7 +34,7 @@ const AssignmentPanel = () => {
 
   const fetchAssignments = async () => {
     const res = await axios.get(`${API_BASE}/assignments.php`);
-    setAssignments(Array.isArray(res.data) ? res.data : []);
+    setAssignments(res.data);
   };
 
   const handleChange = (e) => {

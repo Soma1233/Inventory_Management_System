@@ -1,6 +1,6 @@
 <?php
-include '../../config/headers.php';
-include '../../config/config.php';
+include '../config/headers.php';
+include '../config/config.php';
 
 session_start();
 
@@ -21,7 +21,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute(['username' => $username]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Use password_verify for secure password checking
+
 if ($user && password_verify($password, $user['password'])) {
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['name'] = $user['username'];

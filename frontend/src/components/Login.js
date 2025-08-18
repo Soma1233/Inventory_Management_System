@@ -13,15 +13,14 @@ function Login() {
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/admin/login.php`,
+        `${process.env.REACT_APP_API_URL}/login.php`,
         { username, password },
         { withCredentials: true }
       );
 
       if (res.data.status === 'success') {
-        const role = res.data.user.role;
         setUser(res.data.user);
-
+        const role = res.data.user.role;
         if (role === 'admin') {
           alert("Logging In!...")
           navigate('/admindashboard');
@@ -32,6 +31,7 @@ function Login() {
           alert('Unknown role. Please contact support.');
         }
       } else {
+        console.log(res)
         alert(res.data.message);
       }
     } catch (err) {

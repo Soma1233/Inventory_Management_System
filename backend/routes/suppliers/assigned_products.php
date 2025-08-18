@@ -4,7 +4,7 @@ include '../../config/config.php';
 
 try {
     $method = $_SERVER['REQUEST_METHOD'];
-
+//fetch all assigned products for a supplier based on userId and type
     if ($method === 'GET') {
         $userId = isset($_GET['userId']) ? intval($_GET['userId']) : null;
         $type = isset($_GET['type']) ? $_GET['type'] : 'pending';

@@ -18,6 +18,8 @@ const AdminDashboard = () => {
   if (loading) {
     return <p>Loading user info...</p>;
   }
+
+  //To restrict access to the admin dashboard for suppliers
   if(user.role=="supplier"){
     return <p>You are restricted to view this page</p>
   }
@@ -42,7 +44,7 @@ const AdminDashboard = () => {
       });
       if (res.data.status === 'logged out') {
         alert("Logging Out!...")
-        navigate('/login'); // Redirect to login page
+        navigate('/login'); 
       }
     } catch (err) {
       console.error('Logout failed:', err);

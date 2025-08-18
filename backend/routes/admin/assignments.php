@@ -5,6 +5,7 @@ include '../../config/config.php';
 try {
     $method = $_SERVER['REQUEST_METHOD'];
 
+    //tp fetch assignments
     if ($method === 'GET') {
         $stmt = $pdo->query("
             SELECT ps.id, ps.product_id, ps.supplier_id, ps.requested_quantity, ps.status,
@@ -53,6 +54,8 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing required fields"]);
         }
+
+        // To update assignments
     } elseif ($method === 'PUT') {
         parse_str($_SERVER['QUERY_STRING'], $params);
         $id = $params['id'] ?? null;
@@ -79,6 +82,8 @@ try {
             http_response_code(400);
             echo json_encode(["error" => "Missing required fields"]);
         }
+
+        // To delete assignments
     } elseif ($method === 'DELETE') {
         parse_str($_SERVER['QUERY_STRING'], $params);
         $id = $params['id'] ?? null;

@@ -1,18 +1,19 @@
 <?php
 include '../../config/headers.php';
 include '../../config/config.php';
-error_log("Request method: " . $_SERVER['REQUEST_METHOD']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 try {
+    //To fetch suppliers
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $stmt = $pdo->query("SELECT * FROM suppliers");
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    //To create suppliers
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents("php://input"), true);
         if (
@@ -30,7 +31,6 @@ try {
                 ':username' => $data['name'],
                 ':password' => $hashedPassword
             ]);
-            $userId = $pdo->lastInsertId();
     
             // Step 2: Create supplier
             $stmtSupplier = $pdo->prepare("INSERT INTO suppliers (name, contact_email, phone, address, created_at)
@@ -49,7 +49,7 @@ try {
         }
     }
     
-
+// To update suppliers
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $data = json_decode(file_get_contents("php://input"), true);
         if (
@@ -74,6 +74,7 @@ try {
         }
     }
 
+// To delete suppliers 
     if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
         if (isset($_GET['id'])) {
             // Step 1: Get supplier name

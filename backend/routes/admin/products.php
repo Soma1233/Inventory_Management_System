@@ -5,12 +5,14 @@ include '../../config/config.php';
 header("Content-Type: application/json");
 
 try {
-    
+    //To fetch products
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $stmt = $pdo->query("SELECT * FROM products");
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($products);
     }
+
+    //To add a new product  
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -36,6 +38,7 @@ try {
         }
     }
 
+    //To delete a product
     if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         if (isset($_GET['id'])) {
             $stmt = $pdo->prepare("DELETE FROM products WHERE id = :id");
