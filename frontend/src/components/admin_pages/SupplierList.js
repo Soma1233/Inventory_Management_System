@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import '../styles/SupplierList.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "../styles/SupplierList.css";
 
 const SupplierList = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [form, setForm] = useState({
     id: null,
-    name: '',
-    contact_email: '',
-    phone: '',
-    address: '',
-    password: ''
+    name: "",
+    contact_email: "",
+    phone: "",
+    address: "",
+    password: "",
   });
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const API_BASE = `${process.env.REACT_APP_API_URL}/admin/suppliers.php`;
 
@@ -25,7 +25,7 @@ const SupplierList = () => {
       const res = await axios.get(API_BASE);
       setSuppliers(res.data);
     } catch (err) {
-      console.error('Error fetching suppliers:', err);
+      console.error("Error fetching suppliers:", err);
     }
   };
 
@@ -43,28 +43,37 @@ const SupplierList = () => {
         await axios.post(API_BASE, form);
         alert("Supplier added successfully");
       }
-      setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' });
+      setForm({
+        id: null,
+        name: "",
+        contact_email: "",
+        phone: "",
+        address: "",
+        password: "",
+      });
       fetchSuppliers();
     } catch (err) {
-      console.error('Error saving supplier:', err);
+      alert("Error saving supplier. Please try again.");
+      console.error("Error saving supplier:", err);
     }
   };
 
   const handleEdit = (supplier) => {
-    setForm({ ...supplier, password: '' });
+    setForm({ ...supplier, password: "" });
   };
 
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_BASE}?id=${id}`, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
       fetchSuppliers();
       alert("Supplier deleted successfully");
     } catch (err) {
-      console.error('Error deleting supplier:', err);
+      alert("Error deleting supplier. Please try again.");
+      console.error("Error deleting supplier:", err);
     }
   };
 
@@ -72,11 +81,12 @@ const SupplierList = () => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredSuppliers = suppliers.filter((s) =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.contact_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.address.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSuppliers = suppliers.filter(
+    (s) =>
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.contact_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -84,16 +94,66 @@ const SupplierList = () => {
       <h2>Supplier Management</h2>
 
       <form onSubmit={handleSubmit} className="supplier-form">
-        <input type="text" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
-        <input type="email" name="contact_email" placeholder="Email" value={form.contact_email} onChange={handleChange} required />
-        <input type="number" name="phone" placeholder="Phone" maxLength={10} value={form.phone} onChange={handleChange} required />
-        <input type="text" name="address" placeholder="Address" value={form.address} onChange={handleChange} required />
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="contact_email"
+          placeholder="Email"
+          value={form.contact_email}
+          onChange={handleChange}
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+          required
+        />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone"
+          value={form.phone}
+          onChange={handleChange}
+          maxLength={10}
+          pattern="\d{10}"
+          required
+        />
+        <input
+          type="text"
+          name="address"
+          placeholder="Address"
+          value={form.address}
+          onChange={handleChange}
+          required
+        />
         {!form.id && (
-          <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
         )}
-        <button type="submit">{form.id ? 'Update' : 'Add'} Supplier</button>
+        <button type="submit">{form.id ? "Update" : "Add"} Supplier</button>
         {form.id && (
-          <button type="button" onClick={() => setForm({ id: null, name: '', contact_email: '', phone: '', address: '', password: '' })}>
+          <button
+            type="button"
+            onClick={() =>
+              setForm({
+                id: null,
+                name: "",
+                contact_email: "",
+                phone: "",
+                address: "",
+                password: "",
+              })
+            }
+          >
             Cancel
           </button>
         )}
